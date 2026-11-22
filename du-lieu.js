@@ -16,7 +16,7 @@ window.CAU_HINH = {
 
   // Ưu đãi có hạn THẬT: đồng hồ đếm ngược đến đúng thời điểm này (giờ Việt Nam), giống nhau với mọi khách.
   // Hết hạn: đồng hồ tự ẩn, giá hiện "Liên hệ tư vấn" cho đến khi bạn cập nhật. Muốn tắt hẳn: để ketThuc là "".
-  uuDai: { ketThuc: "2026-11-23T23:59:59+07:00", nhan: "Ưu đãi giá 68.000 VNĐ kết thúc sau" },
+  uuDai: { ketThuc: "2026-11-23T23:59:59+07:00", nhan: "Ưu đãi giá 52.000 VNĐ kết thúc sau" },
 
   // Bốn thẻ nhu cầu. "mota" là nội dung tính năng, điền theo quyền lợi thực tế.
   nhuCau: [
@@ -29,7 +29,7 @@ window.CAU_HINH = {
   // Mỗi gói: sửa / thêm / xóa tự do. Trường để trống = "Đang cập nhật".
   // quyenLoi là danh sách, ví dụ: ["Quyền lợi 1", "Quyền lợi 2"]
   goi: [
-    { id: "goi-1", ten: "Gemini Pro + GG 5TB", gia: "68.000", thoiHan: "6 tháng", hinhThuc: "Nâng cấp tài khoản Gmail chính chủ của khách", quyenLoi: ["Gemini Pro", "GG 5TB"], gioiHan: "", thoiGianBanGiao: "Nhanh nhất khoảng 5 phút, chậm nhất 3 giờ", hoTro: "Bảo hành 24h kể từ lúc mua; đổi một đổi một trong 24h" }
+    { id: "goi-1", ten: "Gemini Pro + GG 5TB", gia: "52.000", thoiHan: "6 tháng", hinhThuc: "Nâng cấp tài khoản Gmail chính chủ của khách", quyenLoi: ["Gemini Pro", "GG 5TB"], gioiHan: "", thoiGianBanGiao: "Nhanh nhất khoảng 5 phút, chậm nhất 3 giờ", hoTro: "Bảo hành 24h kể từ lúc mua; đổi một đổi một trong 24h" }
   ],
 
   // Thông tin nhận tiền (hiện ở bước 3 của quy trình mua). Xóa hết các trường để ẩn.
@@ -37,8 +37,8 @@ window.CAU_HINH = {
     nganHang: "LPBank",
     stk: "3377556666",
     chuTK: "Duy Anh",
-    qr: "qr-thanh-toan.png",   // ảnh QR đã cố định số tiền 68.000 VNĐ
-    luuY: "Chỉ chuyển khoản sau khi DUY ANH AI xác nhận đơn với bạn. Mã QR này ghi sẵn 68.000 VNĐ."
+    qr: "",   // Điền tên file ảnh QR mới (đã ghi sẵn 52.000 VNĐ) khi có, ví dụ "qr-thanh-toan.png"
+    luuY: "Chỉ chuyển khoản sau khi DUY ANH AI xác nhận đơn với bạn. Số tiền: 52.000 VNĐ (khoảng 2 USD). Vui lòng ghi đúng số tiền khi chuyển khoản."
   },
 
   hoTroSauMua: {
