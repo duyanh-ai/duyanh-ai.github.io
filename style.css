@@ -104,6 +104,9 @@ input[type=text],input[type=tel],input[type=email],textarea,select{width:100%;pa
 .sum b{display:inline-block;min-width:110px}
 .ok{background:#EAF7EE;border:1px solid #bfe3c8;border-radius:12px;padding:12px 14px;margin-top:12px}
 .hide{display:none!important}
+.dem{display:inline-block;margin-top:16px;background:var(--y-l);border:1px solid var(--y);border-radius:12px;padding:8px 14px;font-size:.95rem}
+.dem b{color:#9A3B00;font-variant-numeric:tabular-nums}
+.dem.het{background:var(--ac-l);border-color:var(--ac)}
 .qr{width:min(300px,100%);height:auto;border-radius:14px;border:1px solid var(--bd);margin-top:14px}
 .ttin{margin:14px 0;font-size:1rem}
 .ttin div{margin-bottom:4px}

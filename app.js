@@ -7,7 +7,9 @@
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function val(v, alt) { return v && String(v).trim() ? esc(v) : '<span class="pend">' + (alt || CHO) + "</span>"; }
   function tenGoi(g, i) { return g.ten && g.ten.trim() ? g.ten : "Gói " + (i + 1) + " (" + CHO.toLowerCase() + ")"; }
-  function gia(g) { return g.gia && String(g.gia).trim() ? esc(g.gia) : '<span class="pend">Liên hệ tư vấn</span>'; }
+  var U = C.uuDai || {}, hanUD = U.ketThuc ? Date.parse(U.ketThuc) : NaN, coUD = !isNaN(hanUD);
+  function hetUD() { return coUD && Date.now() >= hanUD; }
+  function gia(g) { return g.gia && String(g.gia).trim() && !hetUD() ? esc(g.gia) : '<span class="pend">Liên hệ tư vấn</span>'; }
   var L = C.lienHe, zalo = (L.zalo || "").trim();
 
   /* ---- Liên hệ ---- */
@@ -28,6 +30,26 @@
   $("#f-lien-he").innerHTML = lh.join("");
   $("#lien-he-nhanh").innerHTML = zalo ? "" : '<span class="pend">Kênh Zalo đang cập nhật.</span> Bạn vẫn có thể gửi yêu cầu bằng nút bên cạnh.';
 
+  /* ---- Đồng hồ ưu đãi (hạn thật, cố định) ---- */
+  if (coUD) {
+    var dems = $$("[data-dem]"), p2 = function (n) { return n < 10 ? "0" + n : "" + n; };
+    var tick = function () {
+      var con = hanUD - Date.now();
+      dems.forEach(function (d) {
+        d.classList.remove("hide");
+        if (con <= 0) {
+          d.classList.add("het"); $("[data-dem-nhan]", d).textContent = "Ưu đãi đã kết thúc. Vui lòng liên hệ tư vấn để biết giá hiện tại."; $("[data-dem-gio]", d).textContent = "";
+        } else {
+          var s = Math.floor(con / 1000), ng = Math.floor(s / 86400), g = Math.floor(s % 86400 / 3600), ph = Math.floor(s % 3600 / 60), gi = s % 60;
+          $("[data-dem-nhan]", d).textContent = U.nhan || "Ưu đãi kết thúc sau";
+          $("[data-dem-gio]", d).textContent = (ng ? ng + " ngày " : "") + p2(g) + ":" + p2(ph) + ":" + p2(gi);
+        }
+      });
+      if (con > 0) setTimeout(tick, 1000); else if (!window.__daLai) { window.__daLai = 1; location.reload(); }
+    };
+    tick();
+  }
+
   /* ---- Nhu cầu ---- */
   $("#nhu-cau-list").innerHTML = C.nhuCau.map(function (n, i) {
     return '<div class="card"><div class="ic" aria-hidden="true">' + esc(n.icon || "✨") + "</div><h3>" + esc(n.tieuDe) + '</h3><p class="mu">' + val(n.mota) + '</p><div class="acts"><a class="btn btn-o btn-sm" href="#tu-van" data-nc="' + i + '">Nhờ tư vấn</a></div></div>';
@@ -36,7 +58,7 @@
   /* ---- Gói ---- */
   $("#goi-list").innerHTML = C.goi.map(function (g, i) {
     var ql = g.quyenLoi && g.quyenLoi.length ? "<ul>" + g.quyenLoi.map(function (q) { return "<li>" + esc(q) + "</li>"; }).join("") + "</ul>" : '<p class="mu pend">Quyền lợi: ' + CHO.toLowerCase() + "</p>";
-    return '<article class="card"><h3>' + esc(tenGoi(g, i)) + '</h3><div class="price' + (g.gia ? "" : " pend") + '">' + gia(g) + (g.gia ? ' <small style="font-size:.8rem;font-weight:500">VNĐ</small>' : "") + "</div>" +
+    return '<article class="card"><h3>' + esc(tenGoi(g, i)) + '</h3><div class="price' + (g.gia && !hetUD() ? "" : " pend") + '">' + gia(g) + (g.gia && !hetUD() ? ' <small style="font-size:.8rem;font-weight:500">VNĐ</small>' : "") + "</div>" +
       '<dl><div><dt>Thời hạn: </dt><dd>' + val(g.thoiHan) + "</dd></div><div><dt>Hình thức: </dt><dd>" + val(g.hinhThuc) + "</dd></div><div><dt>Bàn giao dự kiến: </dt><dd>" + val(g.thoiGianBanGiao) + "</dd></div></dl>" + ql +
       '<div class="acts"><button class="btn btn-o btn-sm" data-ct="' + i + '">Xem chi tiết</button><button class="btn btn-y btn-sm" data-mua="' + i + '">Đăng ký mua</button></div></article>';
   }).join("");

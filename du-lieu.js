@@ -14,6 +14,10 @@ window.CAU_HINH = {
   // Để trống: khách sao chép nội dung và mở Zalo; trang KHÔNG báo "đã đặt hàng".
   luuDonUrl: "",
 
+  // Ưu đãi có hạn THẬT: đồng hồ đếm ngược đến đúng thời điểm này (giờ Việt Nam), giống nhau với mọi khách.
+  // Hết hạn: đồng hồ tự ẩn, giá hiện "Liên hệ tư vấn" cho đến khi bạn cập nhật. Muốn tắt hẳn: để ketThuc là "".
+  uuDai: { ketThuc: "2026-11-23T23:59:59+07:00", nhan: "Ưu đãi giá 68.000 VNĐ kết thúc sau" },
+
   // Bốn thẻ nhu cầu. "mota" là nội dung tính năng, điền theo quyền lợi thực tế.
   nhuCau: [
     { icon: "🎓", tieuDe: "Công việc giáo viên", mota: "Gợi ý ý tưởng bài giảng, soạn câu hỏi ôn tập, viết nhận xét học sinh và chuẩn bị tài liệu. Thầy cô luôn xem lại nội dung trước khi dùng." },
