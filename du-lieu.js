@@ -16,7 +16,7 @@ window.CAU_HINH = {
 
   // Nhạc thiền nền: tự tạo trong trình duyệt (không bản quyền), tự phát khi khách vào trang (nếu trình duyệt chặn thì phát ở lần chạm đầu tiên). bat:false = bỏ nút nhạc.
   // Muốn dùng bài nhạc riêng (chỉ dùng nhạc anh có quyền): bỏ file mp3 vào thư mục trang, rồi ghi tepNhac: "ten-file.mp3".
-  nhac: { bat: true, tepNhac: "" },
+  nhac: { bat: true, kieu: "gap", tepNhac: "" },   // kieu: "gap" = nhịp nhanh, sôi động, thúc giục; "thien" = thiền êm
 
   // Ưu đãi có hạn THẬT: đồng hồ đếm ngược đến đúng thời điểm này (giờ Việt Nam), giống nhau với mọi khách.
   // Hết hạn: đồng hồ tự ẩn, giá hiện "Liên hệ tư vấn" cho đến khi bạn cập nhật. Muốn tắt hẳn: để ketThuc là "".

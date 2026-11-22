@@ -184,15 +184,17 @@
   });
 })();
 
-/* ---- Nhạc thiền nền (tự tạo bằng Web Audio, không dùng file có bản quyền) ----
+/* ---- Nhạc nền (tự tạo bằng Web Audio, không dùng file có bản quyền) ----
+   Kiểu nhạc chọn trong du-lieu.js: nhac.kieu = "gap" (nhịp nhanh, sôi động, thúc giục) hoặc "thien" (thiền, êm).
    Cố gắng tự phát khi mở trang. Trình duyệt chặn tiếng nếu khách chưa chạm vào trang,
-   nên nếu bị chặn, nhạc sẽ tự phát ngay ở lần chạm/cuộn/bấm phím đầu tiên của khách. */
+   nên nếu bị chặn, nhạc tự phát ngay ở lần chạm/cuộn/bấm phím đầu tiên của khách. */
 (function () {
   "use strict";
   var M = (window.CAU_HINH && window.CAU_HINH.nhac) || {};
   if (M.bat === false) return;
   var AC = window.AudioContext || window.webkitAudioContext;
   if (!AC && !M.tepNhac) return;
+  var GAP = M.kieu !== "thien";
 
   var btn = document.createElement("button");
   btn.type = "button"; btn.className = "nhac";
@@ -203,38 +205,48 @@
   }
   nhan(false); document.body.appendChild(btn);
 
-  var on = false, want = true, ctx, master, timer, audio, idx = 0, B = 8;
-  var CHORDS = [[146.83, 220.0, 329.63, 440.0], [123.47, 185.0, 293.66, 440.0], [196.0, 293.66, 440.0, 493.88], [146.83, 220.0, 293.66, 369.99]];
+  var on = false, want = true, ctx, master, timer, audio, idx = 0, noise;
+  var BPM = 132, BEAT = 60 / BPM, B = GAP ? BEAT * 4 : 8;
+  // Kiểu thiền
+  var CH_T = [[146.83, 220.0, 329.63, 440.0], [123.47, 185.0, 293.66, 440.0], [196.0, 293.66, 440.0, 493.88], [146.83, 220.0, 293.66, 369.99]];
   var BOWL = [293.66, 369.99, 440.0, 587.33, 739.99];
+  // Kiểu gấp: Am - F - C - G, rồi lên cao dần
+  var BASS = [55.0, 43.65, 65.41, 49.0];
+  var ARP = [[220.0, 261.63, 329.63, 440.0], [174.61, 220.0, 261.63, 349.23], [261.63, 329.63, 392.0, 523.25], [196.0, 246.94, 293.66, 392.0]];
 
-  function reverb() {
-    var len = ctx.sampleRate * 3.2, buf = ctx.createBuffer(2, len, ctx.sampleRate);
-    for (var c = 0; c < 2; c++) { var d = buf.getChannelData(c); for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+  function reverb(sec, pow) {
+    var len = ctx.sampleRate * sec, buf = ctx.createBuffer(2, len, ctx.sampleRate);
+    for (var c = 0; c < 2; c++) { var d = buf.getChannelData(c); for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, pow); }
     var cv = ctx.createConvolver(); cv.buffer = buf; return cv;
   }
   function build() {
     ctx = new AC(); master = ctx.createGain(); master.gain.value = 0;
-    var lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1900;
-    var dry = ctx.createGain(); dry.gain.value = 0.7; var wet = ctx.createGain(); wet.gain.value = 0.55; var rv = reverb();
+    var lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = GAP ? 3800 : 1900;
+    var dry = ctx.createGain(); dry.gain.value = 0.8; var wet = ctx.createGain(); wet.gain.value = GAP ? 0.18 : 0.55; var rv = GAP ? reverb(1.2, 3) : reverb(3.2, 2.6);
     master.connect(lp); lp.connect(dry); lp.connect(rv); rv.connect(wet); dry.connect(ctx.destination); wet.connect(ctx.destination);
-    // âm nền trầm (drone) chạy liên tục
-    [[73.42, 0.07], [110.0, 0.045], [146.83, 0.025]].forEach(function (p) {
-      var o = ctx.createOscillator(), g = ctx.createGain(), l = ctx.createOscillator(), lg = ctx.createGain();
-      o.type = "sine"; o.frequency.value = p[0]; g.gain.value = p[1];
-      l.frequency.value = 0.07 + Math.random() * 0.05; lg.gain.value = p[1] * 0.5; l.connect(lg); lg.connect(g.gain);
-      o.connect(g); g.connect(master); o.start(); l.start();
-    });
+    if (GAP) {
+      var n = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate), d = n.getChannelData(0);
+      for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      noise = n;
+    } else {
+      [[73.42, 0.07], [110.0, 0.045], [146.83, 0.025]].forEach(function (p) {
+        var o = ctx.createOscillator(), g = ctx.createGain(), l = ctx.createOscillator(), lg = ctx.createGain();
+        o.type = "sine"; o.frequency.value = p[0]; g.gain.value = p[1];
+        l.frequency.value = 0.07 + Math.random() * 0.05; lg.gain.value = p[1] * 0.5; l.connect(lg); lg.connect(g.gain);
+        o.connect(g); g.connect(master); o.start(); l.start();
+      });
+    }
   }
+  // ---- kiểu thiền ----
   function pad(t) {
-    CHORDS[idx % 4].forEach(function (f, k) {
+    CH_T[idx % 4].forEach(function (f, k) {
       var o = ctx.createOscillator(), g = ctx.createGain();
       o.type = "sine"; o.frequency.value = f; o.detune.value = (k - 1.5) * 5;
       g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.035, t + 3.2); g.gain.linearRampToValueAtTime(0.0001, t + B + 3);
       o.connect(g); g.connect(master); o.start(t); o.stop(t + B + 3.2);
     });
-    idx++;
   }
-  function bowl(f, t) { // chuông xoay (singing bowl): nhiều họa âm, ngân dài
+  function bowl(f, t) {
     [[1, 0.05], [2.76, 0.018], [5.4, 0.008]].forEach(function (p) {
       [-1.4, 1.4].forEach(function (de) {
         var o = ctx.createOscillator(), g = ctx.createGain();
@@ -244,10 +256,45 @@
       });
     });
   }
+  // ---- kiểu gấp (nhịp nhanh, sôi động) ----
+  function kick(t) {
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "sine"; o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(45, t + 0.12);
+    g.gain.setValueAtTime(0.5, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.25);
+  }
+  function hat(t, v) {
+    var s = ctx.createBufferSource(), g = ctx.createGain(), hp = ctx.createBiquadFilter();
+    s.buffer = noise; hp.type = "highpass"; hp.frequency.value = 7000;
+    g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+    s.connect(hp); hp.connect(g); g.connect(master); s.start(t); s.stop(t + 0.06);
+  }
+  function pluck(f, t, v) {
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "triangle"; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(v, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + BEAT * 0.9);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + BEAT);
+  }
+  function bass(f, t) {
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "sawtooth"; o.frequency.value = f * 2;
+    var lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 400;
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.1, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + BEAT * 0.45);
+    o.connect(lp); lp.connect(g); g.connect(master); o.start(t); o.stop(t + BEAT * 0.5);
+  }
+  function barGap(t) {
+    var c = idx % 4, lift = Math.floor(idx / 4) % 2 ? 2 : 1; // 4 ô nhịp đầu thấp, 4 ô sau cao hơn một quãng tám (tăng dần cảm giác dồn dập)
+    for (var b = 0; b < 4; b++) {
+      var tb = t + b * BEAT;
+      kick(tb); hat(tb + BEAT / 2, 0.06); bass(BASS[c], tb + BEAT / 2);
+      if (b === 3) { hat(tb + BEAT * 0.75, 0.05); hat(tb + BEAT * 0.25, 0.04); }
+    }
+    for (var i = 0; i < 8; i++) { var f = ARP[c][[0, 1, 2, 3, 2, 1, 2, 3][i]] * lift; pluck(f, t + i * BEAT / 2, 0.06); }
+  }
   function bar() {
-    var t = ctx.currentTime + 0.05; pad(t);
-    bowl(BOWL[Math.floor(Math.random() * BOWL.length)], t + 0.6);
-    if (Math.random() < 0.8) bowl(BOWL[Math.floor(Math.random() * BOWL.length)], t + 4.6);
+    var t = ctx.currentTime + 0.06;
+    if (GAP) barGap(t); else { pad(t); bowl(BOWL[Math.floor(Math.random() * BOWL.length)], t + 0.6); if (Math.random() < 0.8) bowl(BOWL[Math.floor(Math.random() * BOWL.length)], t + 4.6); }
+    idx++;
   }
   function batDau() {
     if (on || !want) return;
@@ -260,7 +307,7 @@
     var ok = function () {
       if (ctx.state !== "running" || on || !want) return;
       on = true; nhan(true);
-      master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setValueAtTime(master.gain.value, ctx.currentTime); master.gain.linearRampToValueAtTime(1, ctx.currentTime + 3);
+      master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setValueAtTime(master.gain.value, ctx.currentTime); master.gain.linearRampToValueAtTime(GAP ? 0.7 : 1, ctx.currentTime + (GAP ? 1 : 3));
       bar(); timer = setInterval(bar, B * 1000);
     };
     var p = ctx.resume(); if (p && p.then) p.then(ok, function () {}); else ok();
@@ -268,13 +315,12 @@
   function dung() {
     on = false; clearInterval(timer);
     if (audio) audio.pause();
-    if (ctx) { master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setValueAtTime(master.gain.value, ctx.currentTime); master.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.8); setTimeout(function () { if (!on) ctx.suspend(); }, 1000); }
+    if (ctx) { master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setValueAtTime(master.gain.value, ctx.currentTime); master.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.6); setTimeout(function () { if (!on) ctx.suspend(); }, 800); }
     nhan(false);
   }
 
   btn.addEventListener("click", function () { if (on) { want = false; dung(); } else { want = true; batDau(); } });
 
-  // Chạm/bấm/cuộn đầu tiên của khách (ngoài nút nhạc) → nhạc tự phát nếu trình duyệt đã chặn lúc mới mở
   var gestures = ["pointerdown", "touchend", "keydown", "click", "wheel"];
   function onGesture(e) {
     if (e.target && e.target.closest && e.target.closest(".nhac")) return;
@@ -283,5 +329,5 @@
   }
   gestures.forEach(function (g) { document.addEventListener(g, onGesture, true); });
   document.addEventListener("visibilitychange", function () { if (document.hidden) { if (on) dung(); } else batDau(); });
-  batDau(); // thử tự phát ngay khi mở trang
+  batDau();
 })();
