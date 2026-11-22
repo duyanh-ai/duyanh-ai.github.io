@@ -14,6 +14,10 @@ window.CAU_HINH = {
   // Để trống: khách sao chép nội dung và mở Zalo; trang KHÔNG báo "đã đặt hàng".
   luuDonUrl: "",
 
+  // Nhạc nền: mặc định tự tạo nhạc nhẹ trong trình duyệt (không bản quyền), khách bấm nút mới phát. bat:false = bỏ nút nhạc.
+  // Muốn dùng bài nhạc riêng (chỉ dùng nhạc anh có quyền): bỏ file mp3 vào thư mục trang, rồi ghi tepNhac: "ten-file.mp3".
+  nhac: { bat: true, tepNhac: "" },
+
   // Ưu đãi có hạn THẬT: đồng hồ đếm ngược đến đúng thời điểm này (giờ Việt Nam), giống nhau với mọi khách.
   // Hết hạn: đồng hồ tự ẩn, giá hiện "Liên hệ tư vấn" cho đến khi bạn cập nhật. Muốn tắt hẳn: để ketThuc là "".
   uuDai: { ketThuc: "2026-11-23T23:59:59+07:00", nhan: "Ưu đãi giá 2$ (52.000 VNĐ) kết thúc sau" },
