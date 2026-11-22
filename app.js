@@ -58,7 +58,7 @@
   /* ---- Gói ---- */
   $("#goi-list").innerHTML = C.goi.map(function (g, i) {
     var ql = g.quyenLoi && g.quyenLoi.length ? "<ul>" + g.quyenLoi.map(function (q) { return "<li>" + esc(q) + "</li>"; }).join("") + "</ul>" : '<p class="mu pend">Quyền lợi: ' + CHO.toLowerCase() + "</p>";
-    return '<article class="card"><h3>' + esc(tenGoi(g, i)) + '</h3><div class="price' + (g.gia && !hetUD() ? "" : " pend") + '">' + gia(g) + (g.gia && !hetUD() ? ' <small style="font-size:.8rem;font-weight:500">VNĐ</small>' : "") + "</div>" +
+    return '<article class="card"><h3>' + esc(tenGoi(g, i)) + '</h3><div class="price' + (g.gia && !hetUD() ? "" : " pend") + '">' + gia(g) + (g.gia && !hetUD() && !/VN[ĐD]/i.test(g.gia) ? ' <small style="font-size:.8rem;font-weight:500">VNĐ</small>' : "") + "</div>" +
       '<dl><div><dt>Thời hạn: </dt><dd>' + val(g.thoiHan) + "</dd></div><div><dt>Hình thức: </dt><dd>" + val(g.hinhThuc) + "</dd></div><div><dt>Bàn giao dự kiến: </dt><dd>" + val(g.thoiGianBanGiao) + "</dd></div></dl>" + ql +
       '<div class="acts"><button class="btn btn-o btn-sm" data-ct="' + i + '">Xem chi tiết</button><button class="btn btn-y btn-sm" data-mua="' + i + '">Đăng ký mua</button></div></article>';
   }).join("");
