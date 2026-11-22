@@ -48,7 +48,7 @@ window.CAU_HINH = {
   hoTroSauMua: {
     kenhHoTro: "Zalo / điện thoại 0988616707",
     gioLamViec: "",
-    thoiGianPhanHoi: "",
+    thoiGianPhanHoi: "Xử lý đơn nhanh nhất khoảng 5 phút, chậm nhất 3 giờ sau khi xác nhận thanh toán.",
     dieuKienXuLyLoi: "Bảo hành một đổi một trong 24h kể từ lúc mua tài khoản.",
     chinhSachDoiHoan: "Bảo hành một đổi một trong 24h kể từ lúc mua tài khoản."
   },
@@ -58,8 +58,8 @@ window.CAU_HINH = {
     { h: "Tôi có sử dụng tài khoản cá nhân của mình không?", d: "Có. Gói được nâng cấp trên tài khoản Gmail chính chủ của bạn." },
     { h: "Tôi có phải cung cấp mật khẩu không?", d: "Không. DUY ANH AI không thu thập mật khẩu Google, mã OTP hay mã khôi phục qua biểu mẫu này. Hãy cảnh giác nếu có ai yêu cầu các thông tin đó." },
     { h: "Sau khi xác nhận thanh toán bao lâu thì nhận được?", d: "Nhanh nhất khoảng 5 phút, chậm nhất 3 giờ." },
-    { h: "Gói có những giới hạn nào?", d: "" },
-    { h: "Khi hết hạn cần làm gì?", d: "" },
+    { h: "Gói có những giới hạn nào?", d: "Gói Gemini Pro + GG 5TB có thời hạn 6 tháng và được nâng cấp trên tài khoản Gmail chính chủ của bạn. Bảo hành một đổi một trong 24h kể từ lúc mua. Hạn mức sử dụng cụ thể phụ thuộc chính sách của Google và có thể thay đổi theo thời gian; cần biết thêm, vui lòng liên hệ tư vấn." },
+    { h: "Khi hết hạn cần làm gì?", d: "Gói có thời hạn 6 tháng. Khi gần hết hạn, bạn liên hệ DUY ANH AI qua Zalo 0988616707 để được tư vấn bước tiếp theo." },
     { h: "Liên hệ ai khi cần hỗ trợ?", d: "Liên hệ DUY ANH AI qua Zalo hoặc điện thoại 0988616707. Gói được bảo hành một đổi một trong 24h kể từ lúc mua." }
   ],
 
