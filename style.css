@@ -127,3 +127,5 @@ input[type=text],input[type=tel],input[type=email],textarea,select{width:100%;pa
 .hero-bia .wrap{display:block;max-width:1280px;padding:0 12px}
 @media(min-width:800px){.hero-bia{padding:24px 0 12px}.hero-bia .wrap{padding:0 24px}}
 .hero-bia .bia{border-radius:22px}
+.qrbox{position:relative;width:min(300px,100%);aspect-ratio:914/1504;margin:14px auto 0;overflow:hidden;border-radius:16px;border:1px solid var(--bd);background:#fff}
+.qrbox img{position:absolute;width:113%;max-width:none;height:auto;left:-6.455%;top:-16.49%}

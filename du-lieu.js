@@ -40,9 +40,9 @@ window.CAU_HINH = {
   thanhToan: {
     nganHang: "LPBank",
     stk: "3377556666",
-    chuTK: "Duy Anh",
-    qr: "",   // Điền tên file ảnh QR mới (đã ghi sẵn 52.000 VNĐ) khi có, ví dụ "qr-thanh-toan.png"
-    luuY: "Chỉ chuyển khoản sau khi DUY ANH AI xác nhận đơn với bạn. Số tiền: 52.000 VNĐ (khoảng 2 USD). Vui lòng ghi đúng số tiền khi chuyển khoản."
+    chuTK: "NGUYEN DUY ANH",
+    qr: "qr-thanh-toan.webp",   // QR LPBank do chủ tạo, đã ghi sẵn 52.000 VNĐ (nội dung "Moi Ly Cafe"). Đổi giá thì phải thay QR mới.
+    luuY: "Chỉ chuyển khoản sau khi DUY ANH AI xác nhận đơn với bạn. Mã QR đã ghi sẵn số tiền 52.000 VNĐ (khoảng 2 USD)."
   },
 
   hoTroSauMua: {
