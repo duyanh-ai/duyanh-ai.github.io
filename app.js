@@ -184,52 +184,104 @@
   });
 })();
 
-/* ---- Nhạc nền nhẹ (tự tạo bằng Web Audio, không dùng file có bản quyền; mặc định TẮT, khách bấm mới phát) ---- */
+/* ---- Nhạc thiền nền (tự tạo bằng Web Audio, không dùng file có bản quyền) ----
+   Cố gắng tự phát khi mở trang. Trình duyệt chặn tiếng nếu khách chưa chạm vào trang,
+   nên nếu bị chặn, nhạc sẽ tự phát ngay ở lần chạm/cuộn/bấm phím đầu tiên của khách. */
 (function () {
   "use strict";
   var M = (window.CAU_HINH && window.CAU_HINH.nhac) || {};
   if (M.bat === false) return;
   var AC = window.AudioContext || window.webkitAudioContext;
   if (!AC && !M.tepNhac) return;
+
   var btn = document.createElement("button");
-  btn.type = "button"; btn.className = "nhac"; btn.setAttribute("aria-pressed", "false");
-  function nhan(on) { btn.innerHTML = (on ? "🔊" : "🔇") + '<span>' + (on ? "Tắt nhạc" : "Bật nhạc") + "</span>"; btn.setAttribute("aria-pressed", on ? "true" : "false"); btn.setAttribute("aria-label", on ? "Tắt nhạc nền" : "Bật nhạc nền"); }
+  btn.type = "button"; btn.className = "nhac";
+  function nhan(o) {
+    btn.innerHTML = (o ? "🔊" : "🔇") + "<span>" + (o ? "Tắt nhạc" : "Bật nhạc") + "</span>";
+    btn.setAttribute("aria-pressed", o ? "true" : "false");
+    btn.setAttribute("aria-label", o ? "Tắt nhạc nền" : "Bật nhạc nền");
+  }
   nhan(false); document.body.appendChild(btn);
 
-  var on = false, ctx, master, timer, audio;
-  var CHORDS = [[261.63, 329.63, 392.0, 493.88], [220.0, 261.63, 329.63, 392.0], [174.61, 261.63, 329.63, 440.0], [196.0, 246.94, 293.66, 392.0]];
-  var BELL = [523.25, 587.33, 659.25, 783.99, 880.0], idx = 0, B = 4.2;
-  function chord(fs, t) {
-    fs.forEach(function (f, k) {
-      var o = ctx.createOscillator(), g = ctx.createGain();
-      o.type = "triangle"; o.frequency.value = f / (k === 0 ? 2 : 1); o.detune.value = (k - 1.5) * 4;
-      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.05, t + 1.4); g.gain.linearRampToValueAtTime(0.0001, t + B + 1.2);
-      o.connect(g); g.connect(master); o.start(t); o.stop(t + B + 1.3);
+  var on = false, want = true, ctx, master, timer, audio, idx = 0, B = 8;
+  var CHORDS = [[146.83, 220.0, 329.63, 440.0], [123.47, 185.0, 293.66, 440.0], [196.0, 293.66, 440.0, 493.88], [146.83, 220.0, 293.66, 369.99]];
+  var BOWL = [293.66, 369.99, 440.0, 587.33, 739.99];
+
+  function reverb() {
+    var len = ctx.sampleRate * 3.2, buf = ctx.createBuffer(2, len, ctx.sampleRate);
+    for (var c = 0; c < 2; c++) { var d = buf.getChannelData(c); for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+    var cv = ctx.createConvolver(); cv.buffer = buf; return cv;
+  }
+  function build() {
+    ctx = new AC(); master = ctx.createGain(); master.gain.value = 0;
+    var lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1900;
+    var dry = ctx.createGain(); dry.gain.value = 0.7; var wet = ctx.createGain(); wet.gain.value = 0.55; var rv = reverb();
+    master.connect(lp); lp.connect(dry); lp.connect(rv); rv.connect(wet); dry.connect(ctx.destination); wet.connect(ctx.destination);
+    // âm nền trầm (drone) chạy liên tục
+    [[73.42, 0.07], [110.0, 0.045], [146.83, 0.025]].forEach(function (p) {
+      var o = ctx.createOscillator(), g = ctx.createGain(), l = ctx.createOscillator(), lg = ctx.createGain();
+      o.type = "sine"; o.frequency.value = p[0]; g.gain.value = p[1];
+      l.frequency.value = 0.07 + Math.random() * 0.05; lg.gain.value = p[1] * 0.5; l.connect(lg); lg.connect(g.gain);
+      o.connect(g); g.connect(master); o.start(); l.start();
     });
   }
-  function bell(f, t) {
-    var o = ctx.createOscillator(), g = ctx.createGain();
-    o.type = "sine"; o.frequency.value = f;
-    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.04, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.2);
-    o.connect(g); g.connect(master); o.start(t); o.stop(t + 2.3);
+  function pad(t) {
+    CHORDS[idx % 4].forEach(function (f, k) {
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "sine"; o.frequency.value = f; o.detune.value = (k - 1.5) * 5;
+      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.035, t + 3.2); g.gain.linearRampToValueAtTime(0.0001, t + B + 3);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t + B + 3.2);
+    });
+    idx++;
+  }
+  function bowl(f, t) { // chuông xoay (singing bowl): nhiều họa âm, ngân dài
+    [[1, 0.05], [2.76, 0.018], [5.4, 0.008]].forEach(function (p) {
+      [-1.4, 1.4].forEach(function (de) {
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = "sine"; o.frequency.value = f * p[0] + de;
+        g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(p[1], t + 0.04); g.gain.exponentialRampToValueAtTime(0.0001, t + 9);
+        o.connect(g); g.connect(master); o.start(t); o.stop(t + 9.2);
+      });
+    });
   }
   function bar() {
-    var t = ctx.currentTime + 0.05; chord(CHORDS[idx % 4], t); idx++;
-    for (var i = 0; i < 4; i++) if (Math.random() < 0.7) bell(BELL[Math.floor(Math.random() * BELL.length)], t + i * 1.05 + 0.3);
+    var t = ctx.currentTime + 0.05; pad(t);
+    bowl(BOWL[Math.floor(Math.random() * BOWL.length)], t + 0.6);
+    if (Math.random() < 0.8) bowl(BOWL[Math.floor(Math.random() * BOWL.length)], t + 4.6);
   }
-  function bat() {
-    if (M.tepNhac) { audio = audio || Object.assign(new Audio(M.tepNhac), { loop: true, volume: 0.35 }); audio.play().catch(function () {}); return; }
-    if (!ctx) {
-      ctx = new AC(); master = ctx.createGain(); master.gain.value = 0;
-      var lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2200; master.connect(lp); lp.connect(ctx.destination);
+  function batDau() {
+    if (on || !want) return;
+    if (M.tepNhac) {
+      audio = audio || Object.assign(new Audio(M.tepNhac), { loop: true, volume: 0.35 });
+      audio.play().then(function () { on = true; nhan(true); }).catch(function () {});
+      return;
     }
-    ctx.resume(); master.gain.cancelScheduledValues(ctx.currentTime); master.gain.linearRampToValueAtTime(1, ctx.currentTime + 1.5);
-    bar(); timer = setInterval(bar, B * 1000);
+    if (!ctx) build();
+    var ok = function () {
+      if (ctx.state !== "running" || on || !want) return;
+      on = true; nhan(true);
+      master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setValueAtTime(master.gain.value, ctx.currentTime); master.gain.linearRampToValueAtTime(1, ctx.currentTime + 3);
+      bar(); timer = setInterval(bar, B * 1000);
+    };
+    var p = ctx.resume(); if (p && p.then) p.then(ok, function () {}); else ok();
   }
-  function tat() {
+  function dung() {
+    on = false; clearInterval(timer);
     if (audio) audio.pause();
-    if (ctx) { clearInterval(timer); master.gain.cancelScheduledValues(ctx.currentTime); master.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.6); setTimeout(function () { if (!on) ctx.suspend(); }, 800); }
+    if (ctx) { master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setValueAtTime(master.gain.value, ctx.currentTime); master.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.8); setTimeout(function () { if (!on) ctx.suspend(); }, 1000); }
+    nhan(false);
   }
-  btn.addEventListener("click", function () { on = !on; nhan(on); if (on) bat(); else tat(); });
-  document.addEventListener("visibilitychange", function () { if (document.hidden && on) { on = false; nhan(false); tat(); } });
+
+  btn.addEventListener("click", function () { if (on) { want = false; dung(); } else { want = true; batDau(); } });
+
+  // Chạm/bấm/cuộn đầu tiên của khách (ngoài nút nhạc) → nhạc tự phát nếu trình duyệt đã chặn lúc mới mở
+  var gestures = ["pointerdown", "touchend", "keydown", "click", "wheel"];
+  function onGesture(e) {
+    if (e.target && e.target.closest && e.target.closest(".nhac")) return;
+    batDau();
+    if (on) gestures.forEach(function (g) { document.removeEventListener(g, onGesture, true); });
+  }
+  gestures.forEach(function (g) { document.addEventListener(g, onGesture, true); });
+  document.addEventListener("visibilitychange", function () { if (document.hidden) { if (on) dung(); } else batDau(); });
+  batDau(); // thử tự phát ngay khi mở trang
 })();

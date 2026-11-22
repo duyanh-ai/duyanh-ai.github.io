@@ -14,7 +14,7 @@ window.CAU_HINH = {
   // Để trống: khách sao chép nội dung và mở Zalo; trang KHÔNG báo "đã đặt hàng".
   luuDonUrl: "",
 
-  // Nhạc nền: mặc định tự tạo nhạc nhẹ trong trình duyệt (không bản quyền), khách bấm nút mới phát. bat:false = bỏ nút nhạc.
+  // Nhạc thiền nền: tự tạo trong trình duyệt (không bản quyền), tự phát khi khách vào trang (nếu trình duyệt chặn thì phát ở lần chạm đầu tiên). bat:false = bỏ nút nhạc.
   // Muốn dùng bài nhạc riêng (chỉ dùng nhạc anh có quyền): bỏ file mp3 vào thư mục trang, rồi ghi tepNhac: "ten-file.mp3".
   nhac: { bat: true, tepNhac: "" },
 
