@@ -53,6 +53,7 @@
     $("#thanh-toan").classList.remove("hide");
     $("#tt-nh").textContent = T.nganHang || ""; $("#tt-stk").textContent = T.stk; $("#tt-ten").textContent = T.chuTK || ""; $("#tt-luuy").textContent = T.luuY || "";
     if (T.qr) $("#tt-qr").src = T.qr; else $("#tt-qr").classList.add("hide");
+    document.addEventListener("click", function (e) { if (e.target.closest("[data-qr]")) { if ($("#dlg-mua").open) dong($("#dlg-mua")); mo($("#dlg-tt")); } });
     $("#tt-chep").addEventListener("click", function () {
       var b = this, ok = function () { b.textContent = "Đã sao chép ✓"; setTimeout(function () { b.textContent = "Sao chép số tài khoản"; }, 2000); };
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(T.stk).then(ok, function () { b.textContent = "Hãy chép: " + T.stk; });

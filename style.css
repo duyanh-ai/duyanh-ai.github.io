@@ -104,9 +104,11 @@ input[type=text],input[type=tel],input[type=email],textarea,select{width:100%;pa
 .sum b{display:inline-block;min-width:110px}
 .ok{background:#EAF7EE;border:1px solid #bfe3c8;border-radius:12px;padding:12px 14px;margin-top:12px}
 .hide{display:none!important}
-.pay{display:grid;gap:16px;align-items:center}
-.pay img{width:min(220px,100%);height:auto;border-radius:12px;border:1px solid var(--bd);justify-self:center}
-@media(min-width:600px){.pay{grid-template-columns:auto 1fr}}
+.qr{width:min(300px,100%);height:auto;border-radius:14px;border:1px solid var(--bd);margin-top:14px}
+.ttin{margin:14px 0;font-size:1rem}
+.ttin div{margin-bottom:4px}
+.ttin dt{font-weight:600;display:inline}
+.ttin dd{display:inline;margin:0}
 .legal{white-space:pre-wrap;margin:12px 0 0}
 .lbtn{background:none;border:0;color:var(--ac);text-decoration:underline;font:inherit;cursor:pointer;padding:0}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}

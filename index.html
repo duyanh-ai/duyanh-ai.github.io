@@ -83,16 +83,9 @@
       <div class="step"><h3>Thanh toán</h3><p>Thanh toán theo hướng dẫn đã được xác nhận với bạn.</p></div>
       <div class="step"><h3>Nhận dịch vụ</h3><p>Nhận dịch vụ và hướng dẫn sử dụng.</p></div>
     </div>
-    <div id="thanh-toan" class="card hide" style="margin-top:20px;max-width:760px">
-      <h3>Thông tin chuyển khoản</h3>
-      <div class="pay">
-        <img id="tt-qr" alt="Mã QR chuyển khoản" width="220" height="288" loading="lazy">
-        <div>
-          <dl><div><dt>Ngân hàng: </dt><dd id="tt-nh"></dd></div><div><dt>Số tài khoản: </dt><dd><b id="tt-stk"></b></dd></div><div><dt>Chủ tài khoản: </dt><dd id="tt-ten"></dd></div></dl>
-          <button class="btn btn-o btn-sm" id="tt-chep" type="button">Sao chép số tài khoản</button>
-          <p class="mu" id="tt-luuy" style="margin:10px 0 0"></p>
-        </div>
-      </div>
+    <div id="thanh-toan" class="hide" style="margin-top:22px">
+      <button class="btn btn-y" type="button" data-qr>Xem mã QR thanh toán</button>
+      <p class="mu" style="margin:8px 0 0;font-size:.9rem">Chỉ chuyển khoản sau khi DUY ANH AI xác nhận đơn với bạn.</p>
     </div>
   </div>
 </section>
@@ -172,6 +165,17 @@
         <button class="btn btn-y" id="gui" style="flex:1"></button>
       </div>
     </div>
+  </div>
+</dialog>
+
+<!-- Thanh toán -->
+<dialog id="dlg-tt" aria-labelledby="tt-t">
+  <div class="dh"><h3 id="tt-t" style="color:#B98600">Quét mã để thanh toán</h3><button class="x" data-dong aria-label="Đóng">×</button></div>
+  <div class="db" style="text-align:center">
+    <img id="tt-qr" class="qr" alt="Mã QR chuyển khoản" width="300" height="393">
+    <dl class="ttin"><div><dt>Ngân hàng: </dt><dd id="tt-nh"></dd></div><div><dt>Số tài khoản: </dt><dd><b id="tt-stk"></b></dd></div><div><dt>Chủ tài khoản: </dt><dd id="tt-ten"></dd></div></dl>
+    <button class="btn btn-o btn-sm" id="tt-chep" type="button">Sao chép số tài khoản</button>
+    <p class="warn" id="tt-luuy" style="text-align:left"></p>
   </div>
 </dialog>
 
