@@ -115,3 +115,5 @@ input[type=text],input[type=tel],input[type=email],textarea,select{width:100%;pa
 .legal{white-space:pre-wrap;margin:12px 0 0}
 .lbtn{background:none;border:0;color:var(--ac);text-decoration:underline;font:inherit;cursor:pointer;padding:0}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+.avt{justify-self:center;width:min(320px,78vw);aspect-ratio:1;border-radius:50%;padding:8px;background:linear-gradient(135deg,var(--y),#FFE08A 60%,var(--ac));box-shadow:var(--sh)}
+.avt img{width:100%;height:100%;object-fit:cover;object-position:50% 35%;border-radius:50%;border:5px solid #fff;display:block}
