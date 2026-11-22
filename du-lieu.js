@@ -47,7 +47,7 @@ window.CAU_HINH = {
 
   hoTroSauMua: {
     kenhHoTro: "Zalo / điện thoại 0988616707",
-    gioLamViec: "",
+    gioLamViec: "24/7",
     thoiGianPhanHoi: "Xử lý đơn nhanh nhất khoảng 5 phút, chậm nhất 3 giờ sau khi xác nhận thanh toán.",
     dieuKienXuLyLoi: "Bảo hành một đổi một trong 24h kể từ lúc mua tài khoản.",
     chinhSachDoiHoan: "Bảo hành một đổi một trong 24h kể từ lúc mua tài khoản."
