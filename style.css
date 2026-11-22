@@ -122,3 +122,8 @@ input[type=text],input[type=tel],input[type=email],textarea,select{width:100%;pa
 @media(min-width:800px){.nhac{bottom:24px}}
 .bia{width:100%;border-radius:20px;overflow:hidden;box-shadow:0 10px 30px rgba(40,30,120,.25);border:3px solid #fff}
 .bia img{display:block;width:100%;height:auto}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hero-bia{padding:16px 0 8px;background:#fff}
+.hero-bia .wrap{display:block;max-width:1280px;padding:0 12px}
+@media(min-width:800px){.hero-bia{padding:24px 0 12px}.hero-bia .wrap{padding:0 24px}}
+.hero-bia .bia{border-radius:22px}
